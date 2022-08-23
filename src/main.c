@@ -600,6 +600,10 @@ void on_output_dimension_change(struct output* output)
 		return;
 
 	log_debug("Output dimensions changed. Restarting frame capturer...\n");
+	if (self->nr_clients == 0)
+		return;
+
+	nvnc_log(NVNC_LOG_DEBUG, "Output dimensions changed. Restarting frame capturer...");
 
 	screencopy_stop(&self->screencopy);
 	wayvnc_start_capture_immediate(self);

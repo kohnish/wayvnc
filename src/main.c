@@ -603,7 +603,6 @@ void on_output_dimension_change(struct output* output)
 	if (self->nr_clients == 0)
 		return;
 
-	nvnc_log(NVNC_LOG_DEBUG, "Output dimensions changed. Restarting frame capturer...");
 
 	screencopy_stop(&self->screencopy);
 	wayvnc_start_capture_immediate(self);
@@ -802,10 +801,7 @@ static void on_client_cleanup(struct nvnc_client* client)
 	struct wayvnc* self = nvnc_get_userdata(nvnc);
 
 	self->nr_clients--;
-	nvnc_log(NVNC_LOG_DEBUG, "Client disconnected, new client count: %d",
-			self->nr_clients);
 	if (self->nr_clients == 0) {
-		nvnc_log(NVNC_LOG_INFO, "Stopping screen capture");
 		screencopy_stop(&self->screencopy);
 		stop_performance_ticker(self);
 	}
@@ -817,14 +813,11 @@ static void on_client_new(struct nvnc_client* client)
 	struct wayvnc* self = nvnc_get_userdata(nvnc);
 
 	if (self->nr_clients == 0) {
-		nvnc_log(NVNC_LOG_INFO, "Starting screen capture");
 		start_performance_ticker(self);
 		wayvnc_start_capture_immediate(self);
 	}
 	self->nr_clients++;
 	nvnc_set_client_cleanup_fn(client, on_client_cleanup);
-	nvnc_log(NVNC_LOG_DEBUG, "Client connected, new client count: %d",
-			self->nr_clients);
 }
 
 void parse_keyboard_option(struct wayvnc* self, char* arg)
